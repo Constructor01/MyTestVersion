@@ -40,13 +40,6 @@ private:
             if (input.length() <= 64 && is_all_digits(input)) {
                 std::sort(input.begin(), input.end(), std::greater<char>());
 
-                for (char& c : input) {
-                    if (c % 2 == 0) {
-                        c = 'K';  // Replace even digits with 'K'
-                    }
-                }
-                std::replace(input.begin(), input.end(), 'K', 'B');
-                
                 sum = calculate_sum(input); // Calculate sum of original numerical values
 
                 std::unique_lock<std::mutex> lock(mtx);
