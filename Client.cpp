@@ -34,21 +34,19 @@ int main() {
             continue;
         }
 
-        char buffer[1024];
-        int bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0);
-        if (bytesRead <= 0) {
+        int receivedSum;
+        int bytesRead = recv(clientSocket, &receivedSum, sizeof(receivedSum), 0);
+        if (bytesRead != sizeof(receivedSum)) {
             close(clientSocket);
             continue;
         }
 
-        std::string receivedData(buffer, bytesRead);
         close(clientSocket);
 
-        if (receivedData.length() > 2 && std::stoi(receivedData) % 32 == 0) {
-            std::cout << "Received valid data: " << receivedData << std::endl;
-        }
-        else {
-            std::cout << "Received invalid data: " << receivedData << std::endl;
+        if (receivedSum > 2 && receivedSum % 32 == 0) {
+            std::cout << "Received valid sum: " << receivedSum << std::endl;
+        } else {
+            std::cout << "Received invalid sum: " << receivedSum << std::endl;
         }
     }
 
