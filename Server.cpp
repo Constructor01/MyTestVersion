@@ -4,6 +4,9 @@
 #include <condition_variable>
 #include <vector>
 #include <algorithm>
+#include <cstring>
+#include <arpa/inet.h>
+#include <unistd.h>
 
 class ProgramFirst {
 public:
@@ -64,6 +67,9 @@ private:
             data_ready = false;
             lock.unlock();
 
+            // Simulate passing the data to Program #2 via a socket
+            send_data_to_program2(data);
+
             std::cout << "Processed data: " << data << std::endl;
 
             int sum = 0;
@@ -84,6 +90,30 @@ private:
             // In this example, we'll just print a message to simulate the transfer.
             std::cout << "Sum sent to Program #2." << std::endl;
         }
+    }
+
+    void send_data_to_program2(const std::string& data) {
+        int clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+        if (clientSocket == -1) {
+            std::cerr << "Error creating socket" << std::endl;
+            return;
+        }
+
+        sockaddr_in serverAddr;
+        serverAddr.sin_family = AF_INET;
+        serverAddr.sin_port = htons(12345); // Port used by Program #2
+        serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1"); // IP address of Program #2
+
+        if (connect(clientSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == -1) {
+            std::cerr << "Error connecting to Program #2" << std::endl;
+            close(clientSocket);
+            return;
+        }
+
+        // Send the data to Program #2
+        send(clientSocket, data.c_str(), data.size(), 0);
+
+        close(clientSocket);
     }
 };
 
