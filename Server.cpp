@@ -43,12 +43,14 @@ private:
                 std::string pre_str;
                 for (char& c : input) {
                     if ((c - '0') % 2 == 0) {
-                        pre_str.push_back("BK");
+                        pre_str.push_back('B');
+                        pre_str.push_back('K');
                         continue;
                     }
                     pre_str.push_back(c);
                 }
                 input = move(pre_str);
+                std::cout << input << std::endl;
 
                 sum = calculate_sum(input);
 
