@@ -26,6 +26,7 @@ private:
     bool data_ready;
     int sum;
     std::thread t1, t2;
+    std::string result;
 
     bool is_all_digits(const std::string& str) {
         return str.find_first_not_of("0123456789") == std::string::npos;
@@ -36,21 +37,24 @@ private:
             std::string input;
             std::cout << "Enter a string of digits (up to 64 characters): ";
             std::cin >> input;
-
+            std::cout<<std::endl;
             if (input.length() <= 64 && is_all_digits(input)) {
                 std::sort(input.begin(), input.end(), std::greater<char>());
                 
                 std::string pre_str;
                 for (char& c : input) {
                     if ((c - '0') % 2 == 0) {
-                        pre_str.push_back('B');
                         pre_str.push_back('K');
+                        pre_str.push_back('B');
                         continue;
                     }
                     pre_str.push_back(c);
                 }
                 input = move(pre_str);
-                std::cout << input << std::endl;
+                this->result = input;
+
+                std::cout << "Result string: " << this->result << std::endl;
+                std::cout << "Result string sum: " << this->sum << std::endl;
 
                 sum = calculate_sum(input);
 
