@@ -26,7 +26,6 @@ private:
     bool data_ready;
     int sum;
     std::thread t1, t2;
-    std::string result;
 
     bool is_all_digits(const std::string& str) {
         return str.find_first_not_of("0123456789") == std::string::npos;
@@ -51,12 +50,11 @@ private:
                     pre_str.push_back(c);
                 }
                 input = move(pre_str);
-                this->result = input;
-
-                std::cout << "Result string: " << this->result << std::endl;
-                std::cout << "Result string sum: " << this->sum << std::endl;
 
                 sum = calculate_sum(input);
+
+                std::cout << "Result string: " << input << std::endl;
+                std::cout << "Result string sum: " << sum << std::endl;
 
                 std::unique_lock<std::mutex> lock(mtx);
                 data_ready = true;
