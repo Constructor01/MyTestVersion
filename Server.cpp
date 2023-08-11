@@ -24,7 +24,7 @@ private:
     std::mutex mtx;
     std::condition_variable cv;
     bool data_ready;
-    int sum; // Store the sum calculated in thread1
+    int sum;
     std::thread t1, t2;
 
     bool is_all_digits(const std::string& str) {
@@ -39,13 +39,24 @@ private:
 
             if (input.length() <= 64 && is_all_digits(input)) {
                 std::sort(input.begin(), input.end(), std::greater<char>());
+                
+                std::string pre_str;
+                for (char& c : input) {
+                    if ((c - '0') % 2 == 0) {
+                        pre_str.push_back("BK");
+                        continue;
+                    }
+                    pre_str.push_back(c);
+                }
+                input = move(pre_str);
 
-                sum = calculate_sum(input); // Calculate sum of original numerical values
+                sum = calculate_sum(input);
 
                 std::unique_lock<std::mutex> lock(mtx);
                 data_ready = true;
                 cv.notify_one();
-            } else {
+            }
+            else {
                 std::cout << "Invalid input. Please enter a valid string of digits." << std::endl;
             }
         }
@@ -54,9 +65,8 @@ private:
     void thread2() {
         while (true) {
             std::unique_lock<std::mutex> lock(mtx);
-            cv.wait(lock, [this]{ return data_ready; });
+            cv.wait(lock, [this] { return data_ready; });
 
-            // Simulate passing the sum to Program #2 via a socket
             send_sum_to_program2(sum);
 
             data_ready = false;
@@ -86,7 +96,7 @@ private:
         serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1"); // IP address of Program #2
 
         if (connect(clientSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == -1) {
-            std::cerr << "Error connecting to Program #2" << std::endl;
+            //std::cerr << "Error connecting to Program #2" << std::endl;
             close(clientSocket);
             return;
         }
